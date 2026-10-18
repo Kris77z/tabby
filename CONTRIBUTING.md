@@ -11,12 +11,12 @@ For full protocol development, use Node.js 22.19+, npm, and Foundry. A complete 
 | Change | Appropriate validation |
 | --- | --- |
 | README, architecture, module guides | `npm run docs:check` and review the linked source/evidence |
-| Saved acceptance checker or evidence relationships | `npm run evidence:check` and `npm run test:evidence`; retain failed attempts and dated scopes |
+| Saved acceptance checker or evidence relationships | `npm run review:check` includes the historical and unified checkers plus mutation tests; retain failed attempts and dated scopes |
 | TypeScript services or shared types | `npm run typecheck:all` and the affected workspace tests |
 | Read-only economic advice | `npm run strategy:demo` and `npm run review:check`; `npm run economics:local` additionally checks advice against fresh Anvil execution history |
 | Solidity financial behavior | `forge test --root contracts --offline`; review invariants and affected integrations |
 | Full local payment/verification/settlement path | `npm run test:demo` with local Anvil and Docker |
-| Economic lifecycle and independent publisher/Worker integration | `npm run review:integration` with Foundry, Docker and the pinned Python image; see the [economic loop](docs/economic-loop-local.md) and [consumer guide](examples/publisher-worker/README.md) |
+| Economic lifecycle, independent publisher/Worker and bounded decisions | `npm run review:integration` with Foundry, Docker and the pinned Python image; see the [economic loop](docs/economic-loop-local.md), [consumer guide](examples/publisher-worker/README.md), and [bounded controller](docs/BOUNDED-ECONOMY.md) |
 | UI behavior and wallet interactions | Frontend unit/browser checks described in [frontend README](frontend/README.md) |
 | Monad recovery or real-model integration | Explicit opt-in configuration and dated evidence; use the relevant runbook |
 

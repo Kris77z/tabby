@@ -43,12 +43,15 @@
     "test:sdk:standalone": "node scripts/check-sdk-standalone.mjs",
     "economics:local": "node scripts/check-economic-loop.mjs",
     "test:publisher-worker": "node scripts/check-publisher-worker.mjs",
-    "review:integration": "npm run economics:local && npm run test:publisher-worker",
+    "review:integration": "npm run economics:local && npm run test:publisher-worker && npm run economics:bounded -- --execute-local",
     "strategy:demo": "tsx scripts/strategy-advice-demo.ts",
     "test:strategy-demo": "tsx --test scripts/test/strategy-advice-demo.test.ts",
     "operating:demo": "tsx scripts/operating-report-demo.ts",
     "operating:report": "tsx scripts/operating-report.ts",
-    "test:operating-demo": "tsx --test scripts/test/operating-report-demo.test.ts"
+    "test:operating-demo": "tsx --test scripts/test/operating-report-demo.test.ts",
+    "review:evidence": "node scripts/review-evidence.mjs",
+    "review:replay": "node scripts/review-replay.mjs",
+    "economics:bounded": "node scripts/check-bounded-economy.mjs"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

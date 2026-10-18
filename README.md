@@ -28,7 +28,9 @@ npm run review:check
 
 This checks documentation, saved evidence, types and selected controlled mechanisms. [Review scope and deeper verification](docs/REVIEW.md) · [Standalone SDK integration](examples/sdk-standalone/README.md).
 
-For fresh local transactions, Docker verification and operating accounts, run `npm run review:integration` after preparing Foundry and the pinned Python image. It runs the [economic lifecycle](docs/economic-loop-local.md), followed by an [independent publisher/Worker consumer](examples/publisher-worker/README.md). Both use temporary Anvil chains and controlled model responses, separate from the public Monad evidence above.
+**Latest repository evidence · 2026-10-18:** [unified evidence and read-only replay](docs/REVIEW-REPLAY.md) connect public history, local integrations, strategy advice and role accounts. `npm run --silent review:evidence -- --json` emits the checked manifest; `npm run review:replay` opens a loopback viewer URL. The [bounded local controller](docs/BOUNDED-ECONOMY.md) selects from funded tasks and genuine local quotes, executes within fixed limits, and uses actual success/failure to select again. [Fresh local acceptance](docs/p0-review-loop-local-20261018.md) records its scope.
+
+For fresh local transactions, Docker verification and operating accounts, run `npm run review:integration` after preparing Foundry and the pinned Python image. It runs the [economic lifecycle](docs/economic-loop-local.md), followed by an [independent publisher/Worker consumer](examples/publisher-worker/README.md). It then runs the [bounded decision/execution loop](docs/BOUNDED-ECONOMY.md) with explicit local execution enabled. All three use temporary Anvil chains and controlled model responses, separate from the public Monad evidence above.
 
 For the decision feedback step, run `npm run strategy:demo`: [read-only strategy advice](docs/STRATEGY-ADVICE.md) compares original estimates with realized costs and losses, then changes hypothetical choices using cash reserves and minimum-profit requirements. It does not automatically change execution policy.
 

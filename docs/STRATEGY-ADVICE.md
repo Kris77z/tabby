@@ -59,3 +59,5 @@ The existing browser session can use the same methods at `/api/hosted/agents/:id
 The API does not export private journal objects, model responses, endpoint URLs, key paths or signed transactions. Historical evidence remains bounded to retained hosted records, with explicit truncation and missing-record gaps. A complete local accounting result is not a lifetime ledger or a fresh Monad business run.
 
 The [October 17 P1 acceptance](p1-strategy-local-20261017.md) links the fresh offline and Anvil reports, source fingerprints, tested boundaries and preserved-history checks.
+
+The separate [bounded local controller](BOUNDED-ECONOMY.md) reuses this history with observed funded candidates and executes only inside its explicit isolated local mode. It does not turn the hosted preview API into an execution endpoint. [Unified review and replay](REVIEW-REPLAY.md) keeps both evidence scopes visible.

@@ -7,6 +7,8 @@ The repository contains current guides and dated engineering/acceptance records.
 | Question | Read |
 | --- | --- |
 | Where is the short review and one-command check? | [Five-minute review](REVIEW.md): latest evidence, source route, `review:check`, submission/date boundaries and deeper checks. |
+| How can I replay the latest evidence and inspect exact source versions? | [Unified review evidence and replay](REVIEW-REPLAY.md); `review:evidence` and `review:replay`. |
+| Can actual local candidates and results drive the next execution? | [Bounded local economic controller](BOUNDED-ECONOMY.md); shadow by default, explicit local execution with fixed limits. |
 | How can I integrate the SDK outside this workspace? | [Standalone SDK example](../examples/sdk-standalone/README.md). |
 | Can I reproduce task economics and integrate separate publishing/execution roles? | [Local economic lifecycle](economic-loop-local.md) and [independent publisher/Worker example](../examples/publisher-worker/README.md); run `npm run review:integration` with Foundry and Docker. |
 | Does an actual result change the next economic suggestion? | [Read-only strategy advice](STRATEGY-ADVICE.md); run `npm run strategy:demo` for cost deviation, failure-loss cushions, cash reserves and minimum-profit gates. |
@@ -38,6 +40,7 @@ Runbooks retain Chinese operational detail. Real-model or public-chain execution
 
 | Date | Scope |
 | --- | --- |
+| Oct 18, 2026 | [Unified replay and bounded local decisions](p0-review-loop-local-20261018.md): fresh local candidates, exact quotes, feedback, preflight and Unknown recovery; production and prior records unchanged. |
 | Oct 17, 2026 | [Role accounting and subsidy runway](p1-role-local-20261017.md): fresh local lifecycle, Agent/platform/supplier contribution, separate cash and distribution assumptions, authenticated read-only reports and offline operator declarations. |
 | Oct 17, 2026 | [P0 local economic lifecycle and external consumer acceptance](p0-local-20261017.md): real isolated Anvil/Docker, controlled models, seven economic predicates, independent publisher/Worker integration and original-request recovery; no production deployment or third-party adoption claim. |
 | Oct 16, 2026 | [Public demo readiness audit](monad-demo-readiness-20261016.md): current preparation gaps, local corrections, verification scope and a seven-step rehearsal script; no new public business execution. |

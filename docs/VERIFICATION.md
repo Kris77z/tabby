@@ -1,10 +1,26 @@
 # Tabby verification guide
 
-This is an index of reviewable acceptance evidence, updated on **2026-10-17**. The newest public Monad business runs are listed first. Historical claims **A–E** preserve source revision `0526070` and their **Oct 12–13** real-network scope; **F–H** preserve their **Oct 14 local controlled** scope. [Oct 15 outcomes](monad-collaboration-live-20261015.md), failures/defaults and operator remediation remain recorded. Balances and reputation are dated snapshots, not assertions about current live state.
+This is an index of reviewable acceptance evidence, updated on **2026-10-18**. Current repository improvements and public Monad business runs are listed separately. Historical claims **A–E** preserve source revision `0526070` and their **Oct 12–13** real-network scope; **F–H** preserve their **Oct 14 local controlled** scope. [Oct 15 outcomes](monad-collaboration-live-20261015.md), failures/defaults and operator remediation remain recorded. Balances and reputation are dated snapshots, not assertions about current live state.
 
 All linked evidence files are included in the repository. This guide does not require private runtime directories, supplier credentials, signed raw transactions, or the original operators' wallets. It reuses the published acceptance records rather than copying them into a second evidence set.
 
 The [Oct 14 public deployment checks](monad-vps-20261014.md) separately establish HTTPS availability, signature authentication and preservation of the migrated runtime. They add no new paid model or chain execution to the historical cases below.
+
+## Latest repository execution and unified review · 2026-10-18
+
+The [bounded local acceptance](p0-review-loop-local-20261018.md) adds observed funded candidates → decision → execution → actual result → next decision. The [execution report](acceptance/p0-bounded-economy-20261018.json) retains two successful tasks, a paid hidden-test failure, an unresolved Unknown dispatch, counterfactual choices, preflight rejection after competing task acceptance, and unchanged original-payment recovery counters. The [default shadow report](acceptance/p0-bounded-shadow-20261018.json) records no new business effects during its measured window after fixture deployment/funding.
+
+These runs use isolated Anvil `31337`, genuine local provider quotes and contract payments, Docker verification, and controlled delivery responses. They do not update the public Monad deployment. Final cash is 795000 raw mock USDC; complete net operating result remains unknown because the fourth payment is unresolved.
+
+The [unified evidence/replay guide](REVIEW-REPLAY.md) connects 21 reports, 28 capability claims and 146 timeline events, with historical/final/earlier versions and saved/current source hashes. For the short source/test/report mapping use [the review matrix](REVIEW.md#claim--implementation--evidence). On Node.js 22+:
+
+```sh
+npm run review:check
+npm run --silent review:evidence -- --json
+npm run review:replay
+```
+
+Fresh reproduction uses `npm run review:integration` with Foundry and the pinned Docker image. That command executes the economic lifecycle, independent publisher/Worker, and explicitly enabled bounded controller on separate owned local chains. The saved-record check does not re-query public receipts or authenticate external vendor responses.
 
 ## Latest public Monad execution · 2026-10-17
 

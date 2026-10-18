@@ -1,0 +1,599 @@
+{
+  "version": 1,
+  "suite": "local-bounded-economy",
+  "mode": "shadow",
+  "status": "passed",
+  "startedAt": "2026-10-17T16:09:58.218Z",
+  "provenance": {
+    "chainId": "31337",
+    "environment": "owned-local-anvil",
+    "settlementAsset": "six-decimal-mock-USDC",
+    "model": "controlled-response-injection",
+    "evaluation": "real-pinned-Docker-public-and-hidden-tests",
+    "settlement": "independent-Arena-settler-process",
+    "controller": "bounded-deterministic-local-cash-only",
+    "node": "v22.23.2",
+    "tools": {
+      "dockerTransport": "local-unix-socket",
+      "forge": "forge Version: 1.8.1",
+      "anvil": "anvil Version: 1.8.1",
+      "docker": "28.1.1",
+      "image": "sha256:54f0c1506c135da9a6b9cc0b0524b97e225b712ead8d601326d24f7e6619fede"
+    },
+    "source": {
+      "revision": "b2369f0d2a3a09392281dc25914311388819b23d",
+      "dirty": true,
+      "trackedDiffSha256": "12eac5ae8fdea2e97ebb724cc168617eb04e1b76e5b922118ef61f4b75484ac7",
+      "harnessSha256": "3a443b5c3ef1a6ab0b3e0b0ed098de183f3eb29e3177a95c7a906004bdff1652",
+      "launcherSha256": "c3cc65673f0d439828566cbaec4253c61d1ed7a3e938577546dfdcedaa9546ab"
+    },
+    "dockerImage": "python:3.12-alpine@sha256:4c47124a8391cb7a9f571164147d154777cf012a4ece5f86097130d7a4478111"
+  },
+  "scope": {
+    "productionNetworkUsed": false,
+    "publicVendorCalls": false,
+    "autonomousPlannerExercised": false,
+    "creditOptionsExercised": false,
+    "nativeGasValuedInUSDC": false,
+    "limitations": [
+      "Fixture setup deploys and funds local mock contracts before the measured shadow window.",
+      "Trusted task catalog and allowlisted loopback provider; no permissionless market or LLM planning.",
+      "Controlled delivery responses and Unknown fault; payments, hidden Docker verdicts and settlement are real local observations.",
+      "Cash-only policy; borrowing alternatives, native gas valuation and success probabilities are not covered.",
+      "The owned local wallet has one writer; preflight does not establish a concurrent production reserve guard.",
+      "Recovery creates a new executor from durable intent in the same worker process; OS-process restart recovery is not exercised.",
+      "No-comparable-history routes use an explicit fixed cold-start cushion and price cap, not a calibrated risk estimate."
+    ]
+  },
+  "policy": {
+    "version": 1,
+    "id": "bounded-local-cash-v1",
+    "chainId": "31337",
+    "maxTasks": 4,
+    "totalSpendRaw": "480000",
+    "maxPaymentRaw": "120000",
+    "reserveCashRaw": "120000",
+    "minProfitRaw": "20000",
+    "minMarginBps": "1000",
+    "coldStartCushionRaw": "60000",
+    "coldStartMaxPriceRaw": "120000",
+    "maxObservationAgeMs": 10000,
+    "startedAtMs": 1792253398221,
+    "deadlineMs": 1792253638221,
+    "allowedProviderIds": [
+      "trusted-fixed"
+    ]
+  },
+  "policySha256": "edcb5459940d39c4723c7361f751a7d1d15bd0596133f1fa27a0919b99c28e77",
+  "publishedTasks": [
+    {
+      "taskId": "1",
+      "problemId": "sum-integers",
+      "rewardRaw": "335000",
+      "fundedEscrowRaw": "335000",
+      "creation": {
+        "txHash": "0x79d16564b7739f43c2ade7e2d753b8e64e02e2a5c426f6aea860091bc65c5fe0",
+        "blockHash": "0xe43c03883437e8dab6d10ffc6275ce5ace35d74025218229e36d556bf1ffe884",
+        "blockNumber": 25,
+        "status": 1,
+        "event": "TaskCreated",
+        "eventCount": 1,
+        "values": {
+          "taskId": "1",
+          "poster": "0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf",
+          "reward": "335000",
+          "deadline": "1792255201"
+        }
+      }
+    },
+    {
+      "taskId": "2",
+      "problemId": "balanced-brackets",
+      "rewardRaw": "325000",
+      "fundedEscrowRaw": "325000",
+      "creation": {
+        "txHash": "0xca4a59ba6044f8f89199ba63164b74e34cd4572ecfc095d8830717fbd434f527",
+        "blockHash": "0x32b4237b5c54ccf76e7d38ef6bcbde1903211e693187dc9683fbc6e44125312c",
+        "blockNumber": 26,
+        "status": 1,
+        "event": "TaskCreated",
+        "eventCount": 1,
+        "values": {
+          "taskId": "2",
+          "poster": "0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf",
+          "reward": "325000",
+          "deadline": "1792255201"
+        }
+      }
+    },
+    {
+      "taskId": "3",
+      "problemId": "sum-integers",
+      "rewardRaw": "330000",
+      "fundedEscrowRaw": "330000",
+      "creation": {
+        "txHash": "0x3a402d6dc990d4c1c84d2563d6eaeede8219646d76f2633491e7368d905e422c",
+        "blockHash": "0xcccee2c0f27bedb77bb063811af08cb2efa8538f9d9115d695d25c9a92d7fea2",
+        "blockNumber": 27,
+        "status": 1,
+        "event": "TaskCreated",
+        "eventCount": 1,
+        "values": {
+          "taskId": "3",
+          "poster": "0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf",
+          "reward": "330000",
+          "deadline": "1792255201"
+        }
+      }
+    },
+    {
+      "taskId": "4",
+      "problemId": "balanced-brackets",
+      "rewardRaw": "340000",
+      "fundedEscrowRaw": "340000",
+      "creation": {
+        "txHash": "0x8e318a2b533ac635e08eda0585999b113a8b76c27989fe3514f5e4a04266041a",
+        "blockHash": "0x65383a9bf1b63ce56cae1bfdd8a3a9ed0b5ec8e3770242dbc31e163a6e3a8f55",
+        "blockNumber": 28,
+        "status": 1,
+        "event": "TaskCreated",
+        "eventCount": 1,
+        "values": {
+          "taskId": "4",
+          "poster": "0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf",
+          "reward": "340000",
+          "deadline": "1792255201"
+        }
+      }
+    },
+    {
+      "taskId": "5",
+      "problemId": "balanced-brackets",
+      "rewardRaw": "330000",
+      "fundedEscrowRaw": "330000",
+      "creation": {
+        "txHash": "0xe5d96a148332a4c0d5c9a9ea8e7088655246518d00af83c9b582de768f1195ca",
+        "blockHash": "0xf8f153551f2126f0c9edc047f0df69be52e0427a610c6ee7d9770829b89c473a",
+        "blockNumber": 29,
+        "status": 1,
+        "event": "TaskCreated",
+        "eventCount": 1,
+        "values": {
+          "taskId": "5",
+          "poster": "0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf",
+          "reward": "330000",
+          "deadline": "1792255201"
+        }
+      }
+    },
+    {
+      "taskId": "6",
+      "problemId": "sum-integers",
+      "rewardRaw": "100000",
+      "fundedEscrowRaw": "100000",
+      "creation": {
+        "txHash": "0x21cadbfe323e662515fb3621c422fcd59ecb197dc11ea19159c0e4d0829e0bb5",
+        "blockHash": "0xa606afbb871c45a5d62c8dc5271e03b23b33f5c4da51d79d5e7fd7e5ca1e7543",
+        "blockNumber": 30,
+        "status": 1,
+        "event": "TaskCreated",
+        "eventCount": 1,
+        "values": {
+          "taskId": "6",
+          "poster": "0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf",
+          "reward": "100000",
+          "deadline": "1792255201"
+        }
+      }
+    },
+    {
+      "taskId": "7",
+      "problemId": "sum-integers",
+      "rewardRaw": "360000",
+      "fundedEscrowRaw": "360000",
+      "creation": {
+        "txHash": "0x9e1f78d60d19ea9388c646ca3fcd0a37ea449870d27c339fff219ade4ceab8bd",
+        "blockHash": "0x3c420b3831fe1fdd35ee381c7da1486bf0353aa51796f912d9748fe3201f86f4",
+        "blockNumber": 31,
+        "status": 1,
+        "event": "TaskCreated",
+        "eventCount": 1,
+        "values": {
+          "taskId": "7",
+          "poster": "0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf",
+          "reward": "360000",
+          "deadline": "1792255201"
+        }
+      }
+    }
+  ],
+  "rounds": [],
+  "predicates": {
+    "shadowKeepsNoncePaymentsCashAndModelCallsUnchanged": true,
+    "actualCashShortfallStopsNewPayment": true,
+    "candidatesUseFundedChainStateAndGenuineProviderQuotes": true
+  },
+  "sourceSha256": {
+    "scripts/lib/bounded-economy-policy.ts": "3fed20ceb1eae9eb971641225993025358dde2c5606f25692b66a639677bb124",
+    "scripts/bounded-economy-local.ts": "3a443b5c3ef1a6ab0b3e0b0ed098de183f3eb29e3177a95c7a906004bdff1652",
+    "scripts/check-bounded-economy.mjs": "c3cc65673f0d439828566cbaec4253c61d1ed7a3e938577546dfdcedaa9546ab",
+    "services/hosted-agents/src/task-executor.ts": "d030c35127beba2f54f25ea96a647aa9d36dc76aa8c2c6fffa690222f3ea0da6",
+    "services/hosted-agents/src/accounting.ts": "926ced6e7a1c601e05fc87e47ddb5858867fd482534060b6becac63194e4d097",
+    "services/hosted-agents/src/strategy-history.ts": "c19b836110f2f31956a3915cf6f04bfec0b85091a2bf26e33f63cceecfc91aa2",
+    "services/hosted-agents/src/strategy-advice.ts": "8590f4524e8bd8d124f02fa85239c3ee306a701d52d7c763677a83640d203ca9",
+    "services/hosted-agents/src/strategy-types.ts": "2dba25648a3619256d1a28466d66d3c8ab9e2bc43fac29c54331429ad7a6ba45",
+    "services/hosted-agents/src/finance-projection.ts": "b1c2d2992895b93d11f7485917838f8df31e120407d67f620537b96d789f19f9",
+    "services/hosted-agents/src/finance-reader.ts": "f6387300e0793571c8146b571b1d9a9021e8057500893416dba3fc32edc87dfa",
+    "packages/pi-loop/src/workflow.ts": "824ed688031262882acae15a64bd5d9d2d9e626918e97486633e5b6393fdf8ee",
+    "packages/pi-loop/src/selector.ts": "0eee1effe9d38f8b51738d7455d31cd05faa28657a865151308be08b698b65fe",
+    "packages/pi-loop/src/economics.ts": "c5efc4ee98d28a270b411baaf11e83d0fa7ff71e28a0e671c627528a4848227d",
+    "packages/pi-loop/test/workflow-fixture.ts": "450ebfbb2920e638a3284c8b81607e0ea70090cbe63e8c6ea1c6d96f34c9bca0",
+    "services/provider-relay/src/fixed-price.ts": "661225e0c4e8fa299c6f60f838b4dbf2871ea4e80275d2ab8d91e8cc585b4e2e",
+    "services/provider-relay/src/relay.ts": "ff582b42bb4903703a6da4ec32ff2cd2a87cdfe891f62f974a98c58a0823e9f4",
+    "services/arena/src/settler-main.ts": "31a6767d583541ae54810521b9a4fc76dd34a305ac2c211fb7becf7d69c3f344"
+  },
+  "shadow": {
+    "setupTransactionsExcluded": true,
+    "before": {
+      "cashRaw": "40000",
+      "walletTokenRaw": "960000",
+      "providerTokenRaw": "0",
+      "agentNonce": 3,
+      "paymentEvents": 0,
+      "modelCalls": 0
+    },
+    "after": {
+      "cashRaw": "40000",
+      "walletTokenRaw": "960000",
+      "providerTokenRaw": "0",
+      "agentNonce": 3,
+      "paymentEvents": 0,
+      "modelCalls": 0
+    },
+    "quoteCallsBefore": 0,
+    "quoteCallsAfter": 7,
+    "candidates": [
+      {
+        "source": "local-chain-and-provider-quote",
+        "taskId": "1",
+        "problemId": "sum-integers",
+        "providerId": "trusted-fixed",
+        "tier": "cheap",
+        "routeBinding": "6de5745693dd403fb0816f7a7a70a01c320974e718e7e5e9aeb65d340d96a656",
+        "rewardRaw": "335000",
+        "escrowBalanceRaw": "335000",
+        "protocolFeeBps": "0",
+        "taskStatus": "1",
+        "deadlineMs": 1792255201000,
+        "observedAtMs": 1792253402774,
+        "blockNumber": 31,
+        "blockHash": "0x3c420b3831fe1fdd35ee381c7da1486bf0353aa51796f912d9748fe3201f86f4",
+        "quote": {
+          "priceRaw": "120000",
+          "paymentId": "0xa86e2883537392157abb798c8644d079bf6351fbf45374841af41d311dd0f9fd",
+          "requestDigest": "0xaf3acbae3d151df87bba8454731fd246df6d34439170f86bd280b2ff466bcc78",
+          "expiresAtMs": 1792253702000
+        }
+      },
+      {
+        "source": "local-chain-and-provider-quote",
+        "taskId": "2",
+        "problemId": "balanced-brackets",
+        "providerId": "trusted-fixed",
+        "tier": "cheap",
+        "routeBinding": "6de5745693dd403fb0816f7a7a70a01c320974e718e7e5e9aeb65d340d96a656",
+        "rewardRaw": "325000",
+        "escrowBalanceRaw": "325000",
+        "protocolFeeBps": "0",
+        "taskStatus": "1",
+        "deadlineMs": 1792255201000,
+        "observedAtMs": 1792253402817,
+        "blockNumber": 31,
+        "blockHash": "0x3c420b3831fe1fdd35ee381c7da1486bf0353aa51796f912d9748fe3201f86f4",
+        "quote": {
+          "priceRaw": "120000",
+          "paymentId": "0x4e1eaf2bb95381ac3b703190e9be3e1ea725b06a664a8ccc5a26b6b76ec61374",
+          "requestDigest": "0x4618e35fdeed6136566c51dd796fda6ad794d0bb69d649ffe9ffafc21a163321",
+          "expiresAtMs": 1792253702000
+        }
+      },
+      {
+        "source": "local-chain-and-provider-quote",
+        "taskId": "3",
+        "problemId": "sum-integers",
+        "providerId": "trusted-fixed",
+        "tier": "cheap",
+        "routeBinding": "6de5745693dd403fb0816f7a7a70a01c320974e718e7e5e9aeb65d340d96a656",
+        "rewardRaw": "330000",
+        "escrowBalanceRaw": "330000",
+        "protocolFeeBps": "0",
+        "taskStatus": "1",
+        "deadlineMs": 1792255201000,
+        "observedAtMs": 1792253402860,
+        "blockNumber": 31,
+        "blockHash": "0x3c420b3831fe1fdd35ee381c7da1486bf0353aa51796f912d9748fe3201f86f4",
+        "quote": {
+          "priceRaw": "120000",
+          "paymentId": "0xe9d63d762ae26ad566262f2e33b9ff160cfb918388ba7d673666bf994c362f57",
+          "requestDigest": "0x3b85e1508d5dce73aef286d48b2714858770f41a875b9e19dfee0aecef436ee4",
+          "expiresAtMs": 1792253702000
+        }
+      },
+      {
+        "source": "local-chain-and-provider-quote",
+        "taskId": "4",
+        "problemId": "balanced-brackets",
+        "providerId": "trusted-fixed",
+        "tier": "cheap",
+        "routeBinding": "6de5745693dd403fb0816f7a7a70a01c320974e718e7e5e9aeb65d340d96a656",
+        "rewardRaw": "340000",
+        "escrowBalanceRaw": "340000",
+        "protocolFeeBps": "0",
+        "taskStatus": "1",
+        "deadlineMs": 1792255201000,
+        "observedAtMs": 1792253402903,
+        "blockNumber": 31,
+        "blockHash": "0x3c420b3831fe1fdd35ee381c7da1486bf0353aa51796f912d9748fe3201f86f4",
+        "quote": {
+          "priceRaw": "120000",
+          "paymentId": "0x41da57925808b59e0b4b8e36c3e2a892a6f904677a4068aa362d57191f5e03d3",
+          "requestDigest": "0x7d3511cdf1fe827db01ec894b8ed2c73c6e6887304ea6fb54616b05ce7c533fc",
+          "expiresAtMs": 1792253702000
+        }
+      },
+      {
+        "source": "local-chain-and-provider-quote",
+        "taskId": "5",
+        "problemId": "balanced-brackets",
+        "providerId": "trusted-fixed",
+        "tier": "cheap",
+        "routeBinding": "6de5745693dd403fb0816f7a7a70a01c320974e718e7e5e9aeb65d340d96a656",
+        "rewardRaw": "330000",
+        "escrowBalanceRaw": "330000",
+        "protocolFeeBps": "0",
+        "taskStatus": "1",
+        "deadlineMs": 1792255201000,
+        "observedAtMs": 1792253402945,
+        "blockNumber": 31,
+        "blockHash": "0x3c420b3831fe1fdd35ee381c7da1486bf0353aa51796f912d9748fe3201f86f4",
+        "quote": {
+          "priceRaw": "120000",
+          "paymentId": "0x4657836cb758b79f9aea3db08045780dc5d40dcbf6a15ab0966f082e1a678dcf",
+          "requestDigest": "0x62d4167b904fc6284a4865f17f36add06fd7e367a09d33399125a99d1946f952",
+          "expiresAtMs": 1792253702000
+        }
+      },
+      {
+        "source": "local-chain-and-provider-quote",
+        "taskId": "6",
+        "problemId": "sum-integers",
+        "providerId": "trusted-fixed",
+        "tier": "cheap",
+        "routeBinding": "6de5745693dd403fb0816f7a7a70a01c320974e718e7e5e9aeb65d340d96a656",
+        "rewardRaw": "100000",
+        "escrowBalanceRaw": "100000",
+        "protocolFeeBps": "0",
+        "taskStatus": "1",
+        "deadlineMs": 1792255201000,
+        "observedAtMs": 1792253402995,
+        "blockNumber": 31,
+        "blockHash": "0x3c420b3831fe1fdd35ee381c7da1486bf0353aa51796f912d9748fe3201f86f4",
+        "quote": {
+          "priceRaw": "120000",
+          "paymentId": "0x2fabb2450934021c53d251b63a23f73eb245ddbb3b9b3dd2297ad741963a662f",
+          "requestDigest": "0x8f04028fa48712f0b7ed2979fa1a41002380382c9bae2a479f5dbde539e9f8f8",
+          "expiresAtMs": 1792253702000
+        }
+      },
+      {
+        "source": "local-chain-and-provider-quote",
+        "taskId": "7",
+        "problemId": "sum-integers",
+        "providerId": "trusted-fixed",
+        "tier": "cheap",
+        "routeBinding": "6de5745693dd403fb0816f7a7a70a01c320974e718e7e5e9aeb65d340d96a656",
+        "rewardRaw": "360000",
+        "escrowBalanceRaw": "360000",
+        "protocolFeeBps": "0",
+        "taskStatus": "1",
+        "deadlineMs": 1792255201000,
+        "observedAtMs": 1792253403036,
+        "blockNumber": 31,
+        "blockHash": "0x3c420b3831fe1fdd35ee381c7da1486bf0353aa51796f912d9748fe3201f86f4",
+        "quote": {
+          "priceRaw": "120000",
+          "paymentId": "0xc9b1aa4c2134cd3b3ca8397f83eb7b5718ec11f616c798e6b1632fd8d9d24bcd",
+          "requestDigest": "0x0efedec7a331e96b4497f9d614af764e09af59018a95504036e6025c9a154e42",
+          "expiresAtMs": 1792253702000
+        }
+      }
+    ],
+    "decisionAtMs": 1792253403036,
+    "decision": {
+      "policyHash": "edcb5459940d39c4723c7361f751a7d1d15bd0596133f1fa27a0919b99c28e77",
+      "status": "stopped",
+      "stopReason": "CASH_RESERVE",
+      "candidates": [
+        {
+          "taskId": "1",
+          "providerId": "trusted-fixed",
+          "routeBinding": "6de5745693dd403fb0816f7a7a70a01c320974e718e7e5e9aeb65d340d96a656",
+          "status": "rejected",
+          "reasons": [
+            "CASH_RESERVE"
+          ],
+          "gaps": [
+            "NO_COMPARABLE_HISTORY_CONSERVATIVE_COLD_START"
+          ],
+          "comparableCount": 0,
+          "failedComparableCount": 0,
+          "coldStart": true,
+          "quotedCostRaw": "120000",
+          "costBufferRaw": "0",
+          "failureCushionRaw": "0",
+          "coldStartCushionRaw": "60000",
+          "netRevenueRaw": "335000",
+          "completionProfitRaw": "215000",
+          "requiredProfitRaw": "93500",
+          "surplusRaw": "121500"
+        },
+        {
+          "taskId": "2",
+          "providerId": "trusted-fixed",
+          "routeBinding": "6de5745693dd403fb0816f7a7a70a01c320974e718e7e5e9aeb65d340d96a656",
+          "status": "rejected",
+          "reasons": [
+            "CASH_RESERVE"
+          ],
+          "gaps": [
+            "NO_COMPARABLE_HISTORY_CONSERVATIVE_COLD_START"
+          ],
+          "comparableCount": 0,
+          "failedComparableCount": 0,
+          "coldStart": true,
+          "quotedCostRaw": "120000",
+          "costBufferRaw": "0",
+          "failureCushionRaw": "0",
+          "coldStartCushionRaw": "60000",
+          "netRevenueRaw": "325000",
+          "completionProfitRaw": "205000",
+          "requiredProfitRaw": "92500",
+          "surplusRaw": "112500"
+        },
+        {
+          "taskId": "3",
+          "providerId": "trusted-fixed",
+          "routeBinding": "6de5745693dd403fb0816f7a7a70a01c320974e718e7e5e9aeb65d340d96a656",
+          "status": "rejected",
+          "reasons": [
+            "CASH_RESERVE"
+          ],
+          "gaps": [
+            "NO_COMPARABLE_HISTORY_CONSERVATIVE_COLD_START"
+          ],
+          "comparableCount": 0,
+          "failedComparableCount": 0,
+          "coldStart": true,
+          "quotedCostRaw": "120000",
+          "costBufferRaw": "0",
+          "failureCushionRaw": "0",
+          "coldStartCushionRaw": "60000",
+          "netRevenueRaw": "330000",
+          "completionProfitRaw": "210000",
+          "requiredProfitRaw": "93000",
+          "surplusRaw": "117000"
+        },
+        {
+          "taskId": "4",
+          "providerId": "trusted-fixed",
+          "routeBinding": "6de5745693dd403fb0816f7a7a70a01c320974e718e7e5e9aeb65d340d96a656",
+          "status": "rejected",
+          "reasons": [
+            "CASH_RESERVE"
+          ],
+          "gaps": [
+            "NO_COMPARABLE_HISTORY_CONSERVATIVE_COLD_START"
+          ],
+          "comparableCount": 0,
+          "failedComparableCount": 0,
+          "coldStart": true,
+          "quotedCostRaw": "120000",
+          "costBufferRaw": "0",
+          "failureCushionRaw": "0",
+          "coldStartCushionRaw": "60000",
+          "netRevenueRaw": "340000",
+          "completionProfitRaw": "220000",
+          "requiredProfitRaw": "94000",
+          "surplusRaw": "126000"
+        },
+        {
+          "taskId": "5",
+          "providerId": "trusted-fixed",
+          "routeBinding": "6de5745693dd403fb0816f7a7a70a01c320974e718e7e5e9aeb65d340d96a656",
+          "status": "rejected",
+          "reasons": [
+            "CASH_RESERVE"
+          ],
+          "gaps": [
+            "NO_COMPARABLE_HISTORY_CONSERVATIVE_COLD_START"
+          ],
+          "comparableCount": 0,
+          "failedComparableCount": 0,
+          "coldStart": true,
+          "quotedCostRaw": "120000",
+          "costBufferRaw": "0",
+          "failureCushionRaw": "0",
+          "coldStartCushionRaw": "60000",
+          "netRevenueRaw": "330000",
+          "completionProfitRaw": "210000",
+          "requiredProfitRaw": "93000",
+          "surplusRaw": "117000"
+        },
+        {
+          "taskId": "6",
+          "providerId": "trusted-fixed",
+          "routeBinding": "6de5745693dd403fb0816f7a7a70a01c320974e718e7e5e9aeb65d340d96a656",
+          "status": "rejected",
+          "reasons": [
+            "CASH_RESERVE",
+            "MINIMUM_PROFIT"
+          ],
+          "gaps": [
+            "NO_COMPARABLE_HISTORY_CONSERVATIVE_COLD_START"
+          ],
+          "comparableCount": 0,
+          "failedComparableCount": 0,
+          "coldStart": true,
+          "quotedCostRaw": "120000",
+          "costBufferRaw": "0",
+          "failureCushionRaw": "0",
+          "coldStartCushionRaw": "60000",
+          "netRevenueRaw": "100000",
+          "completionProfitRaw": "-20000",
+          "requiredProfitRaw": "80000",
+          "surplusRaw": "-100000"
+        },
+        {
+          "taskId": "7",
+          "providerId": "trusted-fixed",
+          "routeBinding": "6de5745693dd403fb0816f7a7a70a01c320974e718e7e5e9aeb65d340d96a656",
+          "status": "rejected",
+          "reasons": [
+            "CASH_RESERVE"
+          ],
+          "gaps": [
+            "NO_COMPARABLE_HISTORY_CONSERVATIVE_COLD_START"
+          ],
+          "comparableCount": 0,
+          "failedComparableCount": 0,
+          "coldStart": true,
+          "quotedCostRaw": "120000",
+          "costBufferRaw": "0",
+          "failureCushionRaw": "0",
+          "coldStartCushionRaw": "60000",
+          "netRevenueRaw": "360000",
+          "completionProfitRaw": "240000",
+          "requiredProfitRaw": "96000",
+          "surplusRaw": "144000"
+        }
+      ]
+    }
+  },
+  "artifactSha256": {
+    "AgentAccount": "404cf30a8014b2968f514ea0b0c3e5349156ae3d8e46a5fc2f4174d892b5a26d",
+    "CreditManager": "9caed8b54d5e39e5795b61f45638264a881808cd8bdc8eb2f140d1f47422b2a6",
+    "TaskEscrow": "54d52b352d179b625270fb7a89e169578e53fc8e677bac8cabab8d28e879d5b4",
+    "ERC8004Adapter": "0b98004cea7ee7def71e3f0a64edbbe40bd0c57bc53a305ea32939c546b9daa7",
+    "MockERC20": "b344e254307f85c59105ae7d170d421dd10b87d32ae89977dbf3da6803cc9a5d",
+    "MockIdentityRegistry": "be8d3fa38aa2faf23b426df9a69060e5f3b341f916e0e5f075f7865810336539"
+  },
+  "completedAt": "2026-10-17T16:10:03.116Z",
+  "durationMs": 4898,
+  "cleanup": {
+    "privateTempDirectoryRemoved": true,
+    "ownedContainersRemoved": true,
+    "ownedProcessesStopped": true,
+    "ownedIpcDirectoryRemoved": true,
+    "failures": []
+  }
+}

@@ -26,9 +26,15 @@ npm run review:check
 
 此命令检查文档、已存证据、类型及精选受控机制。[检查边界与深度验证](docs/REVIEW.md) · [独立 SDK 接入示例](examples/sdk-standalone/README.md)。
 
-如需重新执行本地链交易、Docker 验证与经营核算，准备 Foundry 和固定摘要的 Python 镜像后，运行 `npm run review:integration`。它依次验证[完整经营过程](docs/economic-loop-local.md)与[独立发布方、Worker 接入](examples/publisher-worker/README.md)。两者均使用临时 Anvil 链和受控模型响应，与上面的公网 Monad 证据分开记录。
+**最新仓库证据 · 2026-10-18：**[统一证据与只读回放](docs/REVIEW-REPLAY.md)连接公网历史、本地集成、策略建议和多角色经营核算。运行 `npm run --silent review:evidence -- --json` 获取已核对清单，运行 `npm run review:replay` 查看本地回放地址。[受限经营控制器](docs/BOUNDED-ECONOMY.md)从已托管任务和本地真实报价中选择，按固定限制执行，再根据成功和失败结果选择下一项。[本轮本地验收](docs/p0-review-loop-local-20261018.md)记录验证范围。
+
+如需重新执行本地链交易、Docker 验证与经营核算，准备 Foundry 和固定摘要的 Python 镜像后，运行 `npm run review:integration`。它依次验证[完整经营过程](docs/economic-loop-local.md)与[独立发布方、Worker 接入](examples/publisher-worker/README.md)。随后显式执行[本地受限决策闭环](docs/BOUNDED-ECONOMY.md)。三项均使用临时 Anvil 链和受控模型响应，与上面的公网 Monad 证据分开记录。
 
 运行 `npm run strategy:demo` 可复验[只读策略建议](docs/STRATEGY-ADVICE.md)：原始预估与实际成本、失败损失对照后，结合现金储备和最低利润要求改变下一次假设选择。该功能不会自动修改执行策略。
+
+## 三方经营核算与补贴续航
+
+运行 `npm run operating:demo`，复验 [Agent、平台和供应商经营核算](docs/OPERATING-REPORT.md)。报告区分原结算收支、运营方声明成本、现金奖补和代币用量；现金消耗与补贴发放采用独立速度计算只读续航。缺失成本保持未知，不把收款称为完整利润。
 
 ## 查看竞技场如何运行
 
@@ -200,7 +206,3 @@ forge test --root contracts --offline
 ## License
 
 项目原创代码采用 [MIT](LICENSE)，第三方依赖、字体和适配材料保留各自许可与来源，详见[归属说明](docs/ATTRIBUTION.md)。`agentfuel` 包名、请求存储键及部分历史名称保留兼容性；Tabby 是产品，InferCredit 是金融协议。
-
-## 三方经营核算与补贴续航
-
-运行 `npm run operating:demo`，复验 [Agent、平台和供应商经营核算](docs/OPERATING-REPORT.md)。报告区分原结算收支、运营方声明成本、现金奖补和代币用量；现金消耗与补贴发放采用独立速度计算只读续航。缺失成本保持未知，不把收款称为完整利润。

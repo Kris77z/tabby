@@ -35,6 +35,14 @@ Goal planning, execution and review use separate calls with a persisted route pe
 
 With external hiring enabled, [discovery and ranking](../services/hosted-agents/src/external/registry.ts) inspect the configured directory and each approved service's identity endpoint. Capability, minimum reputation and affordability are admission rules; ranking then weights reputation 70% and price 30%. Configured endpoint, provider, model and price bindings cannot be replaced by an advertisement. Optional ERC-8004 identity/reputation is read at a pinned, rechecked block. [Hiring](../services/hosted-agents/src/external/hiring.ts) binds the assignment, service snapshot, original 402 payment and result provenance. The goal then reviews the returned artifact in a separate call. This is discovery among operator-approved independent services, rather than permissionless recruitment.
 
+## Economic feedback and local execution
+
+[Task admission](ECONOMICS.md) separates affordability from task profit; [accounting](../services/hosted-agents/src/accounting.ts) separates settled income, service cost, borrowing fees, capital and subsidy. The [strategy history reader](../services/hosted-agents/src/strategy-history.ts) binds realized outcomes to their original predictions. The hosted strategy API remains a read-only preview over owner-supplied hypothetical candidates.
+
+The separate [bounded local controller](BOUNDED-ECONOMY.md) supplies an observed candidate path: owned Anvil task state and genuine local provider quotes → frozen deterministic cash policy → fresh preflight → existing `HostedTaskExecutor` → accounting/history → next selection. It defaults to shadow; `--execute-local` enables the isolated business run. This controller is an integration harness, not a new hosted endpoint or deployed autonomous policy. It assumes one wallet writer and a trusted catalog; Unknown blocks new work and preserves the original recovery binding.
+
+[Role operating reports](OPERATING-REPORT.md) attribute Agent/platform/supplier contributions and retain unknown costs. [Unified review evidence](REVIEW-REPLAY.md) projects registered saved reports for static replay; its server has no business execution endpoint.
+
 ## Payment and inference units
 
 | Service | Purchase and consumption | Source |
