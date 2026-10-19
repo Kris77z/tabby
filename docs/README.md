@@ -40,6 +40,7 @@ Runbooks retain Chinese operational detail. Real-model or public-chain execution
 
 | Date | Scope |
 | --- | --- |
+| Oct 19, 2026 | [Independent economic Worker, process recovery and CI artifacts](p0-independent-local-20261019.md): unified external consumer/decision loop, original-payment recovery and continued local operation. |
 | Oct 18, 2026 | [Unified replay and bounded local decisions](p0-review-loop-local-20261018.md): fresh local candidates, exact quotes, feedback, preflight and Unknown recovery; production and prior records unchanged. |
 | Oct 17, 2026 | [Role accounting and subsidy runway](p1-role-local-20261017.md): fresh local lifecycle, Agent/platform/supplier contribution, separate cash and distribution assumptions, authenticated read-only reports and offline operator declarations. |
 | Oct 17, 2026 | [P0 local economic lifecycle and external consumer acceptance](p0-local-20261017.md): real isolated Anvil/Docker, controlled models, seven economic predicates, independent publisher/Worker integration and original-request recovery; no production deployment or third-party adoption claim. |

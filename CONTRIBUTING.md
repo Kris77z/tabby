@@ -39,7 +39,7 @@ Record acceptance date, chain ID, tested revision, real/controlled model mode, e
 
 Publish only needed, redacted evidence. `demo-output/`, keys, authenticated RPC URLs, sessions, provider secrets, private IPC, and raw signed transaction journals stay outside Git. Public JSON receipt summaries and transaction hashes are appropriate when their schema excludes those fields.
 
-CI runs `review:check` on pull requests and main/master pushes after dependency installation. Its explicit test list excludes public-chain, paid-model and Anvil/Docker integrations. A separate `local-economy` job prepares Foundry and the pinned Docker image, then runs `review:integration` against temporary Anvil chains and controlled model responses. Neither job deploys services or reads production configuration. Keep these verification scopes separate.
+CI packages `review:check` results with `review:artifacts` on pull requests and main/master pushes. A separate `local-economy` job prepares Foundry and the pinned Docker image, then uses `review:artifacts --execute-local` for all `review:integration` suites, including independent Worker restart and continuation. Both upload fixed public artifact directories with checked evidence, portable replay, checksums and fixed failure diagnostics; raw logs and private execution state are excluded. See [artifact reproduction and boundaries](docs/INDEPENDENT-ECONOMY.md#ci-artifacts). Neither job deploys services or reads production configuration.
 
 The [documentation checker](scripts/check-doc-links.mjs) validates the public guide set and accepts additional Markdown paths as arguments. Use repository-relative links so documents work on GitHub and in a clone.
 

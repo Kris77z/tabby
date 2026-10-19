@@ -41,6 +41,9 @@ With external hiring enabled, [discovery and ranking](../services/hosted-agents/
 
 The separate [bounded local controller](BOUNDED-ECONOMY.md) supplies an observed candidate path: owned Anvil task state and genuine local provider quotes → frozen deterministic cash policy → fresh preflight → existing `HostedTaskExecutor` → accounting/history → next selection. It defaults to shadow; `--execute-local` enables the isolated business run. This controller is an integration harness, not a new hosted endpoint or deployed autonomous policy. It assumes one wallet writer and a trusted catalog; Unknown blocks new work and preserves the original recovery binding.
 
+The [independent economic Worker](INDEPENDENT-ECONOMY.md) extends this local path with separate publisher/Worker processes, a packed public SDK installation, original HTTP 402 quote handles, durable policy/history, and OS-process interruption recovery. A wallet authority binding and exclusive journal owner prevent cooperating processes from opening another budget. Unknown requires original-payment refund and task closure before continuation. This is an opt-in local example, not a deployed hosted policy.
+
+
 [Role operating reports](OPERATING-REPORT.md) attribute Agent/platform/supplier contributions and retain unknown costs. [Unified review evidence](REVIEW-REPLAY.md) projects registered saved reports for static replay; its server has no business execution endpoint.
 
 ## Payment and inference units

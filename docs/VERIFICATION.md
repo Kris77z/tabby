@@ -1,5 +1,8 @@
 # Tabby verification guide
 
+The latest repository acceptance is [independent economic Worker and process recovery · Oct 19](p0-independent-local-20261019.md). Its [reproduction guide](INDEPENDENT-ECONOMY.md) distinguishes fresh local execution/CI artifacts from the preserved public Monad evidence below.
+
+
 This is an index of reviewable acceptance evidence, updated on **2026-10-18**. Current repository improvements and public Monad business runs are listed separately. Historical claims **A–E** preserve source revision `0526070` and their **Oct 12–13** real-network scope; **F–H** preserve their **Oct 14 local controlled** scope. [Oct 15 outcomes](monad-collaboration-live-20261015.md), failures/defaults and operator remediation remain recorded. Balances and reputation are dated snapshots, not assertions about current live state.
 
 All linked evidence files are included in the repository. This guide does not require private runtime directories, supplier credentials, signed raw transactions, or the original operators' wallets. It reuses the published acceptance records rather than copying them into a second evidence set.

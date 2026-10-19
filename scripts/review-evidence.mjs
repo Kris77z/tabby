@@ -4,6 +4,7 @@ import { readFileSync, realpathSync } from 'node:fs';
 import { dirname, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { checkEvidence } from './check-acceptance-evidence.mjs';
+import { INDEPENDENT_SOURCE_FILES, validateIndependentEconomyReport, validateIndependentShadowReport } from './lib/independent-economy-evidence.mjs';
 
 // This is a closed registry, not an evidence-file importer. Reports and private
 // journals have different trust/sensitivity boundaries; never spread a report
@@ -26,6 +27,8 @@ export const EVIDENCE_REGISTRY = Object.freeze([
   entry('p1-role-economic-final-20261017', `${ACCEPTANCE}p1-role-economic-loop-final-20261017.json`, 'local-economic'),
   entry('p0-bounded-shadow-20261018', `${ACCEPTANCE}p0-bounded-shadow-20261018.json`, 'local-bounded-shadow'),
   entry('p0-bounded-economy-20261018', `${ACCEPTANCE}p0-bounded-economy-20261018.json`, 'local-bounded'),
+  entry('p0-independent-shadow-20261019', `${ACCEPTANCE}p0-independent-shadow-20261019.json`, 'local-independent-shadow'),
+  entry('p0-independent-economy-20261019', `${ACCEPTANCE}p0-independent-economy-20261019.json`, 'local-independent'),
 ]);
 const REPORTS = new Map(EVIDENCE_REGISTRY.map(r => [r.file, r]));
 const NARRATIVES = Object.freeze([
@@ -33,6 +36,7 @@ const NARRATIVES = Object.freeze([
   ['docs/p1-strategy-local-20261017.md', ['p1-strategy-offline-20261017', 'p1-strategy-economic-20261017']],
   ['docs/p1-role-local-20261017.md', ['p1-role-offline-earlier-20261017', 'p1-role-economic-earlier-20261017', 'p1-role-offline-final-20261017', 'p1-role-economic-final-20261017']],
   ['docs/p0-review-loop-local-20261018.md', ['p0-bounded-shadow-20261018', 'p0-bounded-economy-20261018']],
+  ['docs/p0-independent-local-20261019.md', ['p0-independent-shadow-20261019', 'p0-independent-economy-20261019']],
 ]);
 const IMPLEMENTATION_FILES = new Set([
   'packages/pi-loop/src/economics.ts', 'packages/pi-loop/src/selector.ts', 'packages/pi-loop/src/workflow.ts',
@@ -42,6 +46,7 @@ const IMPLEMENTATION_FILES = new Set([
   ...['README.md', 'package.json', 'package-lock.json', 'protocol.mjs', 'durable.mjs', 'publisher.mjs', 'admit.mjs', 'worker.mjs', 'test/protocol.test.mjs'].map(n => `examples/publisher-worker/${n}`),
   'scripts/lib/bounded-economy-policy.ts', 'scripts/bounded-economy-local.ts', 'scripts/check-bounded-economy.mjs',
   'packages/pi-loop/test/workflow-fixture.ts', 'services/provider-relay/src/fixed-price.ts', 'services/provider-relay/src/relay.ts', 'services/arena/src/settler-main.ts',
+  ...INDEPENDENT_SOURCE_FILES,
 ]);
 const LIMITATIONS = Object.freeze([
   'Offline consistency of registered saved reports; no chain receipt is re-queried and no vendor response is independently authenticated.',
@@ -103,12 +108,13 @@ function implementation(d) {
   const source = d.provenance?.source ?? d.source ?? {};
   if (source.revision !== undefined) assert.match(source.revision, /^[a-f0-9]{40}$/i, 'base revision');
   if (source.dirty !== undefined) assert.equal(typeof source.dirty, 'boolean');
-  const hashes = { ...(d.sourceSha256 ?? {}), ...(d.strategySourceSha256 ?? {}), ...(d.operatingSourceSha256 ?? {}) };
+  const hashes = { ...(d.sourceSha256 ?? {}), ...(d.provenance?.sourceSha256 ?? {}), ...(d.strategySourceSha256 ?? {}), ...(d.operatingSourceSha256 ?? {}) };
   if (source.consumerSha256) for (const [f, hash] of Object.entries(source.consumerSha256)) hashes[`examples/publisher-worker/${f}`] = hash;
   // Harness digests remain identified as saved fingerprints even if the old
   // report did not name their exact repository path.
   const savedFingerprints = {};
   for (const [k, v] of Object.entries(source)) if (/Sha256$/.test(k) && typeof v === 'string') savedFingerprints[k] = digest(v);
+  if (d.suite === 'local-independent-economy') for (const k of ['sdkArchiveSha256', 'launcherSha256']) if (d.provenance[k]) savedFingerprints[k] = digest(d.provenance[k]);
   if (Object.keys(hashes).length) checkHashMap(hashes);
   return {
     revision: source.revision ?? null, dirty: source.dirty ?? null,
@@ -117,7 +123,7 @@ function implementation(d) {
     }), savedFingerprints, semantics: SOURCE_SEMANTICS,
   };
 }
-function localEnvironment(d) {
+function localEnvironment(d, { fresh = false } = {}) {
   assert.equal(d.provenance.chainId, '31337', 'local/public environment mismatch');
   assert.equal(d.provenance.environment, 'owned-local-anvil', 'local/public environment mismatch');
   assert.equal(d.provenance.model, 'controlled-response-injection', 'controlled/public model mismatch');
@@ -125,7 +131,9 @@ function localEnvironment(d) {
   assert.equal(d.scope.productionNetworkUsed, false, 'local report cannot claim production');
   assert.equal(d.scope.publicVendorCalls, false, 'controlled report cannot claim live vendors');
   assert.equal(d.scope.autonomousPlannerExercised, false);
-  assert.match(d.provenance.source.revision, /^[a-f0-9]{40}$/i, 'local base revision'); assert.equal(d.provenance.source.dirty, true, 'local evidence records uncommitted implementation');
+  assert.match(d.provenance.source.revision, /^[a-f0-9]{40}$/i, 'local base revision');
+  if (fresh) assert.equal(typeof d.provenance.source.dirty, 'boolean');
+  else assert.equal(d.provenance.source.dirty, true, 'local evidence records uncommitted implementation');
   for (const field of ['trackedDiffSha256', 'harnessSha256', 'launcherSha256']) digest(d.provenance.source[field]);
   return { kind: 'local-anvil', chainId: '31337', modelMode: 'controlled', execution: 'real-local-contracts-and-Docker' };
 }
@@ -142,8 +150,8 @@ const BASE_PREDICATES = ['rejectLossWithZeroPayment', 'realCreditExecutionSettle
 const STRATEGY_PREDICATES = ['readOnlyStrategyAdvicePreservesHistoryCashNonceAndModelCalls', 'strategyAdviceRetainsPaidFailureAndBlocksUnknown'];
 const ROLE_PREDICATES = ['roleAccountsReconcileSupplierReceiptsAndRefunds', 'readOnlyRunwaySeparatesActualResultsFromAssumptions'];
 const READ_LABELS = ['after-three-settled-tasks', 'after-paid-failure', 'while-original-payment-is-unknown', 'after-original-full-refund'];
-function validateEconomic(d) {
-  assert.equal(d.version, 1); assert.equal(d.suite, 'local-economic-loop'); assert.equal(d.status, 'passed'); localEnvironment(d); cleanup(d);
+export function validateEconomic(d, options = {}) {
+  assert.equal(d.version, 1); assert.equal(d.suite, 'local-economic-loop'); assert.equal(d.status, 'passed'); localEnvironment(d, options); cleanup(d); validateRawFields(d);
   iso(d.startedAt); iso(d.completedAt); assert.ok(Date.parse(d.completedAt) >= Date.parse(d.startedAt));
   assert.equal(d.durationMs, Date.parse(d.completedAt) - Date.parse(d.startedAt), 'run duration');
   assert.deepEqual(d.scenarios.map(s => s.name), ECONOMIC_SCENARIOS, 'required scenario sequence');
@@ -335,11 +343,11 @@ function validateOperatingReads(d) {
     eq(o.subsidy.gameDistributionOutflowRaw, 0n); eq(o.subsidy.startupCapitalGrantedRaw, 40000n);
   }
 }
-function validateConsumer(d) {
+export function validateConsumer(d, { fresh = false } = {}) {
   assert.equal(d.version, 1); assert.equal(d.suite, 'local-publisher-worker'); assert.equal(d.status, 'passed');
   assert.equal(d.chainId, '31337', 'consumer local environment'); assert.equal(d.assetDecimals, 6);
-  assert.equal(d.scope, 'isolated Anvil; controlled model response; existing Docker Arena; no production execution or external adoption'); cleanup(d); iso(d.generatedAt);
-  assert.match(d.source.revision, /^[a-f0-9]{40}$/i); assert.equal(d.source.dirty, true);
+  assert.equal(d.scope, 'isolated Anvil; controlled model response; existing Docker Arena; no production execution or external adoption'); cleanup(d); iso(d.generatedAt); validateRawFields(d);
+  assert.match(d.source.revision, /^[a-f0-9]{40}$/i); if (fresh) assert.equal(typeof d.source.dirty, 'boolean'); else assert.equal(d.source.dirty, true);
   for (const field of ['harnessSha256', 'trustedConfigSha256', 'sdkArchiveSha256']) digest(d.source[field]); digest(d.provenance.launcherSha256);
   assert.deepEqual(Object.keys(d.source.consumerSha256).sort(), ['README.md', 'package.json', 'package-lock.json', 'protocol.mjs', 'durable.mjs', 'publisher.mjs', 'admit.mjs', 'worker.mjs', 'test/protocol.test.mjs'].sort(), 'complete independent consumer source references');
   const e = d.economics, p = d.payment, s = d.settlement;
@@ -474,8 +482,8 @@ function validateBoundedDecision(decision, candidates, history, policy, cash, sp
 
 // Kept independent of the runtime controller: checks recorded observations and
 // recomputes deterministic cash-only assessments without importing/executing TS.
-export function validateBoundedEconomyReport(d) {
-  assert.equal(d.version, 1); assert.equal(d.suite, 'local-bounded-economy'); assert.equal(d.mode, 'execute-local'); assert.equal(d.status, 'passed'); localEnvironment(d); cleanup(d); validateRawFields(d);
+export function validateBoundedEconomyReport(d, options = {}) {
+  assert.equal(d.version, 1); assert.equal(d.suite, 'local-bounded-economy'); assert.equal(d.mode, 'execute-local'); assert.equal(d.status, 'passed'); localEnvironment(d, options); cleanup(d); validateRawFields(d);
   const startMs = Date.parse(iso(d.startedAt)), endMs = Date.parse(iso(d.completedAt)); assert.ok(endMs >= startMs); assert.equal(d.durationMs, endMs - startMs);
   assert.equal(d.scope.creditOptionsExercised, false); assert.equal(d.provenance.controller, 'bounded-deterministic-local-cash-only');
   const expectedPredicates = ['shadowKeepsNoncePaymentsCashAndModelCallsUnchanged', 'actualCashShortfallStopsNewPayment', 'candidatesUseFundedChainStateAndGenuineProviderQuotes', 'actualTaskStateDriftStopsBeforePayment', 'realSuccessFeedsNextDecision', 'paidFailureChangesNextChoice', 'inputOrderDoesNotControlSelection', 'exactQuoteAndTaskRevalidatedBeforeExecution', 'limitsFrozenBeforeNewPayment', 'unknownStopsNewPayment', 'originalUnknownRecoveryPreservesRequestAndSignedBytes', 'noOwnerTopupsOrGameSubsidy', 'actualsReadDoesNotMutateHistory'];
@@ -576,8 +584,8 @@ export function validateBoundedEconomyReport(d) {
   return { spentRaw: String(spent), taskRevenueRaw: String(revenue), finalCashRaw: d.chain.finalAgentCashRaw, confirmedOperatingResultRaw: null, lastConfirmedOperatingResultRaw: d.rounds[2].actuals.totals.netOperatingRaw, failedExpenseRaw: d.rounds[1].execution.chargedRaw };
 }
 
-export function validateBoundedShadowReport(d) {
-  assert.equal(d.version, 1); assert.equal(d.suite, 'local-bounded-economy'); assert.equal(d.mode, 'shadow'); assert.equal(d.status, 'passed'); localEnvironment(d); cleanup(d); validateRawFields(d); checkHashMap(d.sourceSha256, BOUNDED_SOURCES);
+export function validateBoundedShadowReport(d, options = {}) {
+  assert.equal(d.version, 1); assert.equal(d.suite, 'local-bounded-economy'); assert.equal(d.mode, 'shadow'); assert.equal(d.status, 'passed'); localEnvironment(d, options); cleanup(d); validateRawFields(d); checkHashMap(d.sourceSha256, BOUNDED_SOURCES);
   const startMs = Date.parse(iso(d.startedAt)), endMs = Date.parse(iso(d.completedAt)); assert.equal(d.durationMs, endMs - startMs); assert.ok(endMs >= startMs);
   assert.equal(d.provenance.controller, 'bounded-deterministic-local-cash-only'); assert.equal(d.scope.creditOptionsExercised, false);
   assert.equal(d.policySha256, objectHash(d.policy));
@@ -653,6 +661,40 @@ function economicTimeline(c, d) {
     if (s.refund) createEvent(c, 'original-payment-refunded', 'Original payment refunded', 'The original payment is refunded without creating successful task revenue.', { ...ownership, taskId: d.scenarios[5].taskId, paymentId: s.paymentId, txHash: s.refund.txHash, amountRaw: s.refundedRaw, blockNumber: s.refund.blockNumber });
   }
 }
+function independentTimeline(c, d) {
+  const rounds = d.rounds ?? [];
+  c.bindings = { requestIds: rounds.map(r => r.requestId), taskIds: d.publication.tasks.map(t => t.taskId), paymentIds: rounds.map(r => r.quote.paymentId), transactionHashes: [...new Set([...d.publication.tasks.map(t => t.creation.txHash), ...rounds.flatMap(r => [r.acceptance.txHash, r.payment.txHash, r.settlement.txHash]), ...(d.unknown ? [d.unknown.resolution.receipt.txHash] : [])])] };
+  for (const task of d.publication.tasks) createEvent(c, 'task-published', 'External publisher funded task', 'The independent publisher signed the manifest and funded the recorded local task.', { taskId: task.taskId, txHash: task.creation.txHash, blockNumber: task.creation.blockNumber, amountRaw: task.rewardRaw });
+  if (d.mode === 'shadow') { createEvent(c, 'shadow-observed', 'Independent Worker observed funded tasks', 'The measured observation adds no payment, model request, acceptance, settlement or wallet nonce.', { at: new Date(d.shadow.observation.nowMs).toISOString(), amountRaw: d.shadow.before.cashRaw }); return; }
+  const restartTitles = {
+    'before-payment': 'Worker restarted before original payment',
+    'after-payment': 'Worker restarted after committed payment',
+    'after-settlement': 'Worker restarted after original settlement',
+    'after-unknown': 'Worker restarted after explicit Unknown resolution',
+  };
+  const restart = (round, checkpoint) => {
+    const interruption = d.interruptions.find(i => i.original.requestId === round.requestId && i.checkpoint === checkpoint);
+    if (interruption) createEvent(c, 'worker-process-restarted', restartTitles[checkpoint], 'The old operating-system process exited. A distinct process retained the original policy, handles, signed-byte hashes, gross spend, reservation and pending request without duplicate business effects.', { requestId: interruption.original.requestId, taskId: round.taskId, paymentId: interruption.original.paymentId });
+  };
+  for (const round of rounds) {
+    const binding = { requestId: round.requestId, taskId: round.taskId, paymentId: round.quote.paymentId };
+    createEvent(c, 'decision-selected', 'Bounded choice from signed funded tasks', 'The Worker independently selected the highest eligible surplus using previous actual outcomes and the original cash-only limits.', { ...binding, at: new Date(round.observation.nowMs).toISOString() });
+    createEvent(c, 'task-accepted', 'Original task accepted by the Worker', 'The acceptance event binds the selected task to the same Agent before its cash payment.', { ...binding, txHash: round.acceptance.txHash, blockNumber: round.acceptance.blockNumber });
+    restart(round, 'before-payment');
+    createEvent(c, 'provider-paid', 'Original quote paid once', 'The cash payment belongs to the exact observed original quote and request.', { ...binding, txHash: round.payment.txHash, blockNumber: round.payment.blockNumber, amountRaw: round.chargedRaw });
+    restart(round, 'after-payment');
+    if (round.outcome === 'refunded') {
+      createEvent(c, 'payment-unknown', 'Original paid Unknown blocks new work', 'The original paid dispatch remains unresolved. The blocked snapshots preserve cash, nonce, payment, model, acceptance and settlement counters, and a replacement journal is rejected.', binding);
+      createEvent(c, 'original-payment-refunded', 'Original Unknown payment explicitly refunded', 'The original full provider refund returns the recorded service charge without creating successful task income. The original task must also terminate before work may continue.', { ...binding, txHash: d.unknown.resolution.receipt.txHash, blockNumber: d.unknown.resolution.receipt.blockNumber, amountRaw: d.unknown.resolution.amountRaw });
+    }
+    createEvent(c, round.outcome === 'succeeded' ? 'task-settled' : 'task-failed', round.outcome === 'refunded' ? 'Original Unknown task explicitly terminated' : round.outcome === 'failed' ? 'Paid Docker failure retained' : 'Independent Docker settlement', round.outcome === 'refunded' ? 'Authorized failure terminates the original task after its explicit provider refund; it does not establish a Docker success.' : 'The independent verifier recorded the actual public and hidden Docker test verdict.', { ...binding, txHash: round.settlement.txHash, blockNumber: round.settlement.blockNumber, amountRaw: round.revenueRaw });
+    restart(round, 'after-settlement');
+    if (round.outcome === 'refunded') {
+      createEvent(c, 'unknown-resolved', 'Original Unknown continuation requirements satisfied', 'The original full refund and terminal failed task jointly establish explicit resolution. Further work retains the original policy and gross spending budget.', binding);
+      restart(round, 'after-unknown');
+    }
+  }
+}
 function checkedAccounting(d) {
   const t = d.accounting.totals;
   return {
@@ -668,8 +710,9 @@ function roleFacts(d) {
   return { ...checkedAccounting(d), supplierGrossReceiptsRaw: o.suppliers.grossReceiptsRaw, supplierRefundsRaw: o.suppliers.refundsRaw, supplierNetReceiptsRaw: o.suppliers.netReceiptsRaw, roleTotalsAdditive: false, actualProfitRaw: null,
     hypotheticalRunway: d.operatingReports.map(r => ({ point: r.label, spendableCashRaw: r.operating.cash.spendableCashRaw, horizonMs: r.operating.runway.horizonMs, fullTasks: r.operating.runway.fullTasks, source: 'owner-hypothetical' })) };
 }
-function sourceEnvironment(r, d) {
-  if (['local-economic', 'local-bounded', 'local-bounded-shadow'].includes(r.kind)) return localEnvironment(d);
+function sourceEnvironment(r, d, options = {}) {
+  if (['local-economic', 'local-bounded', 'local-bounded-shadow'].includes(r.kind)) return localEnvironment(d, options);
+  if (['local-independent', 'local-independent-shadow'].includes(r.kind)) return { kind: 'local-anvil', chainId: '31337', modelMode: 'controlled', execution: r.kind === 'local-independent-shadow' ? 'external-installed-SDK-shadow-observation' : 'external-installed-SDK-real-process-recovery' };
   if (r.kind === 'local-consumer') return { kind: 'local-anvil', chainId: '31337', modelMode: 'controlled', execution: 'real-local-contracts-and-Docker' };
   if (r.kind.startsWith('offline-')) return offlineEnvironment(d);
   return r.kind === 'public-monad' ? { kind: 'public-monad', chainId: '10143', modelMode: r.reportId.endsWith('-resources') ? 'read-only-snapshot' : r.reportId.endsWith('-settlement-recovery') ? 'saved-original-recovery' : 'saved-real-vendor', execution: 'historical-public-chain-report' }
@@ -684,6 +727,8 @@ function limitations(r) {
   ];
 }
 function command(r) {
+  if (r.kind === 'local-independent') return 'node scripts/check-independent-economy.mjs --execute-local --report <new absolute file>';
+  if (r.kind === 'local-independent-shadow') return 'node scripts/check-independent-economy.mjs --report <new absolute file>';
   if (r.kind === 'local-bounded') return 'node scripts/check-bounded-economy.mjs --execute-local --report <new absolute file>';
   if (r.kind === 'local-bounded-shadow') return 'node scripts/check-bounded-economy.mjs --report <new absolute file>';
   if (r.kind === 'local-economic') return 'npm run economics:local -- --report <new absolute file>';
@@ -696,7 +741,7 @@ function addClaim(claims, source, capabilityId, title, summary, checkedFacts, bi
   const c = {
     id: `${source.reportId}:${capabilityId}`, capabilityId, title, summary, reportId: source.reportId,
     source: { file: source.file, sha256: source.sha256 }, environment: source.environment, implementation: source.implementation,
-    evidenceStatus: source.evidenceStatus, reproductionCommand: command(REPORTS.get(source.file)),
+    evidenceStatus: source.evidenceStatus, reproductionCommand: command(REPORTS.get(source.file) ?? source),
     scope: source.kind.startsWith('offline-') ? 'controlled-offline-observation' : source.kind === 'public-monad' ? 'historical-saved-public-observation' : 'isolated-local-chain-observation',
     limitations: limitations(source), checkedFacts, bindings, timeline: [],
   };
@@ -728,6 +773,8 @@ export function buildReviewEvidence({ overrides = {} } = {}) {
     if (r.kind === 'local-economic') validateEconomic(d);
     if (r.kind === 'local-bounded') validateBoundedEconomyReport(d);
     if (r.kind === 'local-bounded-shadow') validateBoundedShadowReport(d);
+    if (r.kind === 'local-independent') validateIndependentEconomyReport(d);
+    if (r.kind === 'local-independent-shadow') validateIndependentShadowReport(d);
     if (r.kind === 'local-consumer') validateConsumer(d);
     if (r.kind === 'offline-strategy') validateOfflineStrategy(d);
     if (r.kind === 'offline-role') validateOfflineRole(d, r.evidenceStatus === 'final');
@@ -747,6 +794,12 @@ export function buildReviewEvidence({ overrides = {} } = {}) {
           }
         } else createEvent(c, record.capability === 'presenter-resource-snapshot' ? 'resource-snapshot' : 'saved-observation', title, 'A historical saved observation; no new business operation is performed by this review.', { requestId: c.bindings.requestIds[0], taskId: c.bindings.taskIds[0] });
       }
+    } else if (['local-independent', 'local-independent-shadow'].includes(r.kind)) {
+      const facts = r.kind === 'local-independent' ? validateIndependentEconomyReport(d) : validateIndependentShadowReport(d);
+      const c = addClaim(claims, source, r.kind === 'local-independent' ? 'economy.independent-bounded-process-recovery' : 'economy.independent-default-shadow', r.kind === 'local-independent' ? 'Independent publisher and bounded Worker process recovery' : 'Independent Worker default shadow observation', r.kind === 'local-independent' ? 'An externally installed SDK consumer selects signed funded tasks, retains actual paid failure, recovers killed Worker processes, resolves the original Unknown payment and continues under its original cash-only policy.' : 'The externally installed Worker observes signed funded tasks and genuine provider quotes without measured business effects.', facts);
+      c.limitations.push('The publisher uses a trusted signed task catalog. This local observation does not establish independent-team adoption, commercial demand or an autonomous LLM planner.', 'Saved byte hashes establish internal fingerprint consistency. The review does not independently authenticate signatures, provider responses or chain provenance.', 'Cash-only policy uses a fixed cold-start cushion and paid failure loss. It does not estimate success probability, supplier profit or native gas cost.');
+      if (r.kind === 'local-independent') c.limitations.push('A full refund and an explicitly authorized failed-task termination resolve Unknown. The termination is separate from Docker success. A lock claim with uncertain ownership remains blocked for explicit reconciliation.');
+      independentTimeline(c, d);
     } else if (r.kind === 'local-bounded-shadow') {
       const c = addClaim(claims, source, 'economy.bounded-default-shadow', 'Default bounded shadow observation', 'The default command observes funded local tasks and genuine quotes; its measured window adds no payments, model calls or Agent nonce changes.', validateBoundedShadowReport(d), { ...emptyBindings(), taskIds: d.publishedTasks.map(t => t.taskId), transactionHashes: d.publishedTasks.map(t => t.creation.txHash) });
       c.limitations.push('Fixture setup deployed and funded local contracts before the measured shadow window; the command as a whole is not transaction-free.', 'This shadow summary does not retain an independent final chain-head number.');
@@ -838,14 +891,59 @@ export function validateReviewEvidenceManifest(value) {
   return true;
 }
 
-function validateManifestShape(value) {
+const FRESH_KINDS = ['local-economic', 'local-consumer', 'local-bounded', 'local-bounded-shadow', 'local-independent', 'local-independent-shadow'];
+function freshReference(source) {
+  assert.ok(FRESH_KINDS.includes(source.kind), 'fresh local report kind');
+  assert.ok(typeof source.file === 'string' && source.file.length <= 256, 'bounded public artifact reference');
+  assert.match(source.file, /^(?:[a-zA-Z0-9_-]+\/)*[a-zA-Z0-9_-]+\.json$/, 'public artifact relative JSON reference');
+  assert.equal(source.reportId, `fresh-${source.kind}`, 'fresh report identity');
+}
+
+/** A fresh artifact is checked against the supplied run, separately from the
+ * saved-report registry. sha256 identifies the caller's public projection bytes.
+ * Raw journals, arbitrary report additions and absolute paths are never copied.
+ */
+export function projectFreshReviewEvidence(kind, data, { file, sha256: publicSha256 }) {
+  digest(publicSha256);
+  const source = { reportId: `fresh-${kind}`, file, kind, evidenceStatus: 'final', supersededBy: null, sha256: publicSha256,
+    environment: null, implementation: null, documentation: [] };
+  freshReference(source);
+  let facts;
+  if (kind === 'local-economic') { validateEconomic(data, { fresh: true }); facts = checkedAccounting(data); }
+  else if (kind === 'local-consumer') { validateConsumer(data, { fresh: true }); facts = { currency: 'USDC', decimals: 6, taskId: data.taskId, paymentId: data.paymentId, operatingResultRaw: data.economics.netTaskIncome, closingCashRaw: data.economics.closingCash, replayAddedEffects: 0 }; }
+  else if (kind === 'local-bounded') facts = validateBoundedEconomyReport(data, { fresh: true });
+  else if (kind === 'local-bounded-shadow') facts = validateBoundedShadowReport(data, { fresh: true });
+  else if (kind === 'local-independent') facts = validateIndependentEconomyReport(data);
+  else facts = validateIndependentShadowReport(data);
+  source.environment = sourceEnvironment(source, data, { fresh: true }); source.implementation = implementation(data);
+  const claims = [], c = addClaim(claims, source, 'execution.fresh-local-observation', 'Fresh local acceptance observation', 'A newly generated local report passed independent semantic checks. Its source checksum identifies the public artifact supplied with this manifest.', facts);
+  const freshLimitations = ['Consistency of this newly generated controlled local run; no external provenance, vendor response or public-chain execution is authenticated.', ...LIMITATIONS.slice(1)];
+  c.limitations = [...freshLimitations];
+  if (kind.startsWith('local-independent')) c.limitations.push('A trusted signed task catalog and controlled model responses are used. Saved fingerprints establish internal byte consistency, not external authentication.');
+  if (kind === 'local-economic') { c.bindings = economicBindings(data); economicTimeline(c, data); }
+  else if (kind === 'local-consumer') {
+    c.bindings = { ...emptyBindings(), taskIds: [data.taskId], paymentIds: [data.paymentId], transactionHashes: [data.publication.txHash, data.payment.txHash, data.settlement.txHash] };
+    createEvent(c, 'task-settled', 'Fresh independent local settlement', 'The inspected local publisher and Worker retained the original task, payment and settlement.', { taskId: data.taskId, paymentId: data.paymentId, txHash: data.settlement.txHash, blockNumber: data.settlement.blockNumber });
+  }
+  else if (kind.startsWith('local-independent')) independentTimeline(c, data);
+  const result = { schemaVersion: 1, scope: { mode: 'fresh-local-evidence-consistency', externalProvenanceVerified: false, networkOperations: 0, walletOperations: 0, limitations: freshLimitations }, sources: [source], claims, timeline: c.timeline };
+  validateManifestShape(result, true); return result;
+}
+
+/** Shape validation is deliberately separate from saved-registry validation;
+ * rebuilding a fresh manifest from its raw run is the caller's semantic check.
+ */
+export function validateFreshReviewEvidenceManifestShape(value) { validateManifestShape(value, true); return true; }
+
+function validateManifestShape(value, fresh = false) {
   keys(value, ['schemaVersion', 'scope', 'sources', 'claims', 'timeline'], 'manifest fields'); assert.equal(value.schemaVersion, 1);
   keys(value.scope, ['mode', 'externalProvenanceVerified', 'networkOperations', 'walletOperations', 'limitations'], 'manifest scope');
   assert.equal(value.scope.externalProvenanceVerified, false); assert.equal(value.scope.networkOperations, 0); assert.equal(value.scope.walletOperations, 0);
-  assert.equal(value.scope.mode, 'offline-registered-evidence-consistency');
+  assert.equal(value.scope.mode, fresh ? 'fresh-local-evidence-consistency' : 'offline-registered-evidence-consistency');
   assert.ok(Array.isArray(value.sources)); assert.ok(Array.isArray(value.claims)); assert.ok(Array.isArray(value.timeline));
   unique(value.sources.map(s => s.reportId)); unique(value.claims.map(c => c.id)); unique(value.timeline.map(t => t.id));
-  assert.deepEqual(value.sources.map(s => s.reportId), EVIDENCE_REGISTRY.map(s => s.reportId), 'manifest fixed report registry');
+  if (fresh) assert.equal(value.sources.length, 1, 'fresh manifest contains one inspected report');
+  else assert.deepEqual(value.sources.map(s => s.reportId), EVIDENCE_REGISTRY.map(s => s.reportId), 'manifest fixed report registry');
   const environment = e => {
     keys(e, ['kind', 'chainId', 'modelMode', 'execution'], 'environment fields');
     assert.ok(['local-anvil', 'public-monad', 'offline-fixture'].includes(e.kind));
@@ -862,8 +960,9 @@ function validateManifestShape(value) {
   };
   for (const s of value.sources) {
     keys(s, ['reportId', 'file', 'kind', 'evidenceStatus', 'supersededBy', 'sha256', 'environment', 'implementation', 'documentation'], 'source fields');
-    const registered = REPORTS.get(s.file); assert.ok(registered, 'unregistered manifest report reference');
-    for (const k of ['reportId', 'kind', 'evidenceStatus', 'supersededBy']) assert.equal(s[k], registered[k], 'manifest source registry identity');
+    const registered = REPORTS.get(s.file);
+    if (fresh) { freshReference(s); assert.equal(s.evidenceStatus, 'final'); assert.equal(s.supersededBy, null); assert.deepEqual(s.documentation, []); }
+    else { assert.ok(registered, 'unregistered manifest report reference'); for (const k of ['reportId', 'kind', 'evidenceStatus', 'supersededBy']) assert.equal(s[k], registered[k], 'manifest source registry identity'); }
     digest(s.sha256); environment(s.environment); impl(s.implementation);
     for (const ref of s.documentation) { keys(ref, ['file', 'sha256'], 'documentation fields'); assert.ok(NARRATIVES.some(([f]) => f === ref.file), 'unregistered narrative reference'); digest(ref.sha256); }
   }
@@ -874,7 +973,7 @@ function validateManifestShape(value) {
     assert.equal(c.id, `${c.reportId}:${c.capabilityId}`, 'stable claim id');
     keys(c.source, ['file', 'sha256'], 'claim source fields'); assert.equal(c.source.file, source.file); assert.equal(c.source.sha256, source.sha256, 'claim/report hash reference');
     assert.deepEqual(c.environment, source.environment, 'claim/report environment reference'); assert.deepEqual(c.implementation, source.implementation, 'claim/report implementation reference'); assert.equal(c.evidenceStatus, source.evidenceStatus);
-    assert.equal(c.reproductionCommand, command(REPORTS.get(source.file)), 'claim reproduction command');
+    assert.equal(c.reproductionCommand, command(fresh ? source : REPORTS.get(source.file)), 'claim reproduction command');
     assert.equal(typeof c.title, 'string'); assert.equal(typeof c.summary, 'string');
     keys(c.bindings, ['requestIds', 'taskIds', 'paymentIds', 'transactionHashes'], 'binding fields');
     for (const xs of Object.values(c.bindings)) { assert.ok(Array.isArray(xs)); unique(xs); }
@@ -895,8 +994,9 @@ const stringSchema = { type: 'string' };
 const shaSchema = { type: 'string', pattern: '^[a-f0-9]{64}$' };
 const stringArraySchema = { type: 'array', items: stringSchema };
 const closed = (properties, required = Object.keys(properties)) => ({ type: 'object', additionalProperties: false, required, properties });
-/** JSON Schema describes the public export contract; semantic verification is
- * validateReviewEvidenceManifest and its closed, registered source validators.
+/** JSON Schema describes saved and fresh public shapes. Saved semantics use
+ * validateReviewEvidenceManifest; fresh semantics use projectFreshReviewEvidence
+ * with the original run, followed by validateFreshReviewEvidenceManifestShape.
  */
 export const REVIEW_EVIDENCE_SCHEMA = Object.freeze({
   $schema: 'https://json-schema.org/draft/2020-12/schema',
@@ -904,7 +1004,7 @@ export const REVIEW_EVIDENCE_SCHEMA = Object.freeze({
   title: 'Registered review evidence manifest',
   ...closed({
     schemaVersion: { const: 1 },
-    scope: closed({ mode: { const: 'offline-registered-evidence-consistency' }, externalProvenanceVerified: { const: false }, networkOperations: { const: 0 }, walletOperations: { const: 0 }, limitations: stringArraySchema }),
+    scope: closed({ mode: { enum: ['offline-registered-evidence-consistency', 'fresh-local-evidence-consistency'] }, externalProvenanceVerified: { const: false }, networkOperations: { const: 0 }, walletOperations: { const: 0 }, limitations: stringArraySchema }),
     sources: { type: 'array', items: { $ref: '#/$defs/source' } },
     claims: { type: 'array', items: { $ref: '#/$defs/claim' } },
     timeline: { type: 'array', items: { $ref: '#/$defs/event' } },

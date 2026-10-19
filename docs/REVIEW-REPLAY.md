@@ -1,6 +1,6 @@
 # Unified evidence and review replay
 
-The current review entry joins the preserved public Monad records, local economic lifecycle and independent consumer, strategy feedback, role accounting/subsidy analysis, and [bounded local decisions](BOUNDED-ECONOMY.md). Reports keep their original dates and environments; the viewer does not combine them into one production run.
+The current review entry joins the preserved public Monad records, local economic lifecycle and independent consumer, strategy feedback, role accounting/subsidy analysis, and [independent economic Worker recovery](INDEPENDENT-ECONOMY.md) alongside [bounded local decisions](BOUNDED-ECONOMY.md). Reports keep their original dates and environments; the viewer does not combine them into one production run.
 
 ## Run without business credentials
 
@@ -45,4 +45,8 @@ The validator checks financial arithmetic, original-request and event relationsh
 
 Historical source hashes can differ from current code. The manifest reports saved and current hashes separately; an old hash mismatch does not invalidate an honestly labeled historical run. A revision accompanied by `dirty=true` describes a base commit plus the listed source fingerprints, not a clean committed release.
 
-Checksums and internally consistent evidence are not external attestations. This tool does not re-query receipts, authenticate vendor responses, verify invoices, prove third-party adoption or establish that post-submission work counts toward judging. [Fresh local acceptance](p0-review-loop-local-20261018.md) records this round. Production contracts and historical records remain governed by the [deployment contract](../deploy/monad-vps/README.md).
+Checksums and internally consistent evidence are not external attestations. This tool does not re-query receipts, authenticate vendor responses, verify invoices, prove third-party adoption or establish that post-submission work counts toward judging. [Oct 19 independent Worker acceptance](p0-independent-local-20261019.md) records the latest local execution; [Oct 18 bounded acceptance](p0-review-loop-local-20261018.md) remains separately preserved. Production contracts and historical records remain governed by the [deployment contract](../deploy/monad-vps/README.md).
+
+## Fresh CI evidence bundles
+
+[Independent Worker and recovery](INDEPENDENT-ECONOMY.md#ci-artifacts) adds `review:artifacts`: offline mode packages checked historical evidence; explicit local mode runs all local economic suites and exports separate fresh summaries and replays. Each bundle records check results, base revision and byte checksums. Failed suites remain failed, and raw journals/logs are never uploaded. `--verify` checks bundle completeness and byte integrity, not external provenance. The [Oct 19 acceptance](p0-independent-local-20261019.md) records local verification of this path.

@@ -17,6 +17,9 @@
     'Public token game and task': '公网游戏额度与任务', 'Original settlement recovery': '原结算请求恢复',
     'Read-only resource snapshot': '只读资源快照', 'Local economic lifecycle': '完整本地经营与退款',
     'Independent publisher / Worker consumer': '独立发布方与 Worker 接入', 'Controlled strategy feedback': '离线策略反馈演示',
+    'Independent publisher and bounded Worker process recovery': '独立发布 → 受限经营 → 进程恢复 → 继续经营',
+    'Independent Worker default shadow observation': '独立 Worker · 默认只读观察',
+    'Fresh local acceptance observation': '本次 CI / 本地复验记录',
     'Read-only decision feedback': '实际结果 → 只读策略建议', 'Controlled role contribution and runway': '离线角色经营与补贴续航',
     'Default bounded shadow observation': '默认只读：观察候选与现金储备',
     'Bounded local decision → execution → feedback': '真实候选 → 决策 → 执行 → 结果 → 再决策',
@@ -24,7 +27,8 @@
   };
   const title = claim => titles[claim.title] || claim.title || claim.capabilityId || claim.id;
   const dateOf = claim => Number(claim.reportId?.match(/20\d{6}/)?.[0] || 0);
-  const orderedClaims = [...manifest.claims].sort((a, b) => dateOf(b) - dateOf(a) || (b.capabilityId === 'economy.bounded-feedback-execution') - (a.capabilityId === 'economy.bounded-feedback-execution') || (a.evidenceStatus === 'earlier') - (b.evidenceStatus === 'earlier') || (b.evidenceStatus === 'final') - (a.evidenceStatus === 'final'));
+  const priority = claim => claim.capabilityId === 'economy.independent-bounded-process-recovery' ? 2 : claim.capabilityId === 'economy.bounded-feedback-execution' ? 1 : 0;
+  const orderedClaims = [...manifest.claims].sort((a, b) => dateOf(b) - dateOf(a) || priority(b) - priority(a) || (a.evidenceStatus === 'earlier') - (b.evidenceStatus === 'earlier') || (b.evidenceStatus === 'final') - (a.evidenceStatus === 'final'));
 
   const labels = key => fields[key] || key.replace(/([a-z])([A-Z])/g, '$1 $2');
   let selectedId, selectedEvent = 0;
@@ -67,7 +71,7 @@
       const wrap = element('div', undefined, 'decision-table'), table = element('table'), header = element('tr');
       for (const heading of ['轮次', '实际任务', '实际结果', '移除成功历史', '移除失败历史', '结束现金']) { const th = element('th', heading); th.scope = 'col'; header.append(th); }
       const head = element('thead'); head.append(header); table.append(head); const body = element('tbody');
-      const phases = { Succeeded: '成功', Failed: '付费失败', Paused: 'Unknown · 暂停' };
+      const phases = { Succeeded: '成功', Failed: '付费失败', Paused: 'Unknown · 暂停', Refunded: '原付款退款 · 任务关闭' };
       for (const decision of claim.checkedFacts.decisions) { const row = element('tr'); for (const value of [decision.round, decision.taskId, phases[decision.phase] || decision.phase, decision.selectedWithoutSuccessTaskId, decision.selectedWithoutFailureTaskId, money(decision.cashAfterRaw) ?? decision.cashAfterRaw]) row.append(element('td', value)); body.append(row); }
       table.append(body); wrap.append(table); article.append(wrap);
     }
